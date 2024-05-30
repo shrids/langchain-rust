@@ -3,20 +3,20 @@ use std::process::{Command, Stdio};
 
 use langchain_rust::chain::chain_trait::Chain;
 use langchain_rust::chain::llm_chain::LLMChainBuilder;
-use langchain_rust::llm::openai::OpenAI;
+use langchain_rust::llm::client::Ollama;
 use langchain_rust::prompt::HumanMessagePromptTemplate;
 use langchain_rust::{prompt_args, template_jinja2};
 
 //to try this in action , add something to this file stage it an run it
 #[tokio::main]
 async fn main() -> io::Result<()> {
-    let llm = OpenAI::default();
+    let llm = Ollama::default().with_model("llama3");
     let chain = LLMChainBuilder::new()
         .prompt(HumanMessagePromptTemplate::new(template_jinja2!(
             r#"
     Create a conventional commit message for the following changes.
 
-    File changes: 
+    File changes:
         {{input}}
 
 

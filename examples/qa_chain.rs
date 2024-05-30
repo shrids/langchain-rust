@@ -1,13 +1,13 @@
 use langchain_rust::{
     chain::{Chain, StuffDocumentBuilder},
-    llm::openai::OpenAI,
+    llm::client::Ollama,
     prompt_args,
     schemas::Document,
 };
 
 #[tokio::main]
 async fn main() {
-    let llm = OpenAI::default();
+    let llm = Ollama::default().with_model("llama3");
 
     let chain = StuffDocumentBuilder::new()
         .llm(llm)

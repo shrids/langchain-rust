@@ -15,10 +15,10 @@ use std::io::Write;
 async fn main() {
     // Initialize Embedder
 
-    use langchain_rust::vectorstore::VecStoreOptions;
+    use langchain_rust::{embedding::OllamaEmbedder, vectorstore::VecStoreOptions};
 
     // Requires OpenAI API key to be set in the environment variable OPENAI_API_KEY
-    let embedder = OpenAiEmbedder::default();
+    let embedder = OllamaEmbedder::default();
 
     // Initialize the qdrant_client::QdrantClient
     // Ensure Qdrant is running at localhost, with gRPC port at 6334

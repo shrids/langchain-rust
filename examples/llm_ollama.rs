@@ -4,6 +4,6 @@ use langchain_rust::{language_models::llm::LLM, llm::ollama::client::Ollama};
 async fn main() {
     let ollama = Ollama::default().with_model("llama3");
 
-    let response = ollama.invoke("hola").await.unwrap();
+    let response = ollama.invoke("hello").await.unwrap();
     println!("{}", response);
 }

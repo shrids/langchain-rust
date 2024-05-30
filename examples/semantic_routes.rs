@@ -1,5 +1,5 @@
 use langchain_rust::{
-    embedding::openai::OpenAiEmbedder,
+    embedding::{openai::OpenAiEmbedder, OllamaEmbedder},
     semantic_router::{AggregationMethod, RouteLayerBuilder, Router},
 };
 
@@ -21,7 +21,7 @@ async fn main() {
         ],
     );
     let router_layer = RouteLayerBuilder::default()
-        .embedder(OpenAiEmbedder::default())
+        .embedder(OllamaEmbedder::default())
         .add_route(captial_route)
         .add_route(weather_route)
         .aggregation_method(AggregationMethod::Sum)

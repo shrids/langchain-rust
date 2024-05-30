@@ -2,7 +2,7 @@ use futures::StreamExt;
 use langchain_rust::{
     chain::{Chain, LLMChainBuilder},
     fmt_message, fmt_template,
-    llm::openai::OpenAI,
+    llm::client::Ollama,
     message_formatter,
     prompt::HumanMessagePromptTemplate,
     prompt_args,
@@ -12,7 +12,7 @@ use langchain_rust::{
 
 #[tokio::main]
 async fn main() {
-    let open_ai = OpenAI::default();
+    let open_ai = Ollama::default().with_model("llama3");
 
     let prompt = message_formatter![
         fmt_message!(Message::new_system_message(

@@ -79,7 +79,7 @@ ollama-rs = { version = "0.1.9", optional = true, features = [
 ] }
 
 [features]
-default = []
+default = ["ollama", "qdrant"]
 postgres = ["pgvector", "sqlx", "uuid"]
 tree-sitter = [
     "cc",

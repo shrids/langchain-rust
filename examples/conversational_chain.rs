@@ -3,19 +3,22 @@ use std::io::{stdout, Write};
 use futures_util::StreamExt;
 use langchain_rust::{
     chain::{builder::ConversationalChainBuilder, Chain},
-    // fmt_message, fmt_template,
-    llm::openai::{OpenAI, OpenAIModel},
+    fmt_message,
+    fmt_template,
+    llm::client::Ollama,
     memory::SimpleMemory,
-    // message_formatter,
-    // prompt::HumanMessagePromptTemplate,
+    message_formatter,
+    prompt::HumanMessagePromptTemplate,
     prompt_args,
-    // schemas::Message,
-    // template_fstring,
+    schemas::Message,
+    template_fstring, // schemas::Message,
+                      // template_fstring,
 };
 
 #[tokio::main]
 async fn main() {
-    let llm = OpenAI::default().with_model(OpenAIModel::Gpt35);
+    // let llm = OpenAI::default().with_model(OpenAIModel::Gpt35);
+    let llm = Ollama::default().with_model("llama3");
     //We initialise a simple memory,by default conveational chain have this memory, but we
     //initiliase it as an example, if you dont want to have memory use DummyMemory
     let memory = SimpleMemory::new();
@@ -23,20 +26,20 @@ async fn main() {
     let chain = ConversationalChainBuilder::new()
         .llm(llm)
         //IF YOU WANT TO ADD A CUSTOM PROMPT YOU CAN UN COMMENT THIS:
-        //         .prompt(message_formatter![
-        //             fmt_message!(Message::new_system_message("You are a helpful assistant")),
-        //             fmt_template!(HumanMessagePromptTemplate::new(
-        //             template_fstring!("
-        // The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.
-        //
-        // Current conversation:
-        // {history}
-        // Human: {input}
-        // AI:
-        // ",
-        //             "input","history")))
-        //
-        //         ])
+                .prompt(message_formatter![
+                    fmt_message!(Message::new_system_message("You are a helpful assistant")),
+                    fmt_template!(HumanMessagePromptTemplate::new(
+                    template_fstring!("
+        The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.
+
+        Current conversation:
+        {history}
+        Human: {input}
+        AI:
+        ",
+                    "input","history")))
+
+                ])
         .memory(memory.into())
         .build()
         .expect("Error building ConversationalChain");
