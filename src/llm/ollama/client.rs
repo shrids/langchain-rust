@@ -147,7 +147,6 @@ mod tests {
     }
 
     #[tokio::test]
-    #[ignore]
     async fn test_stream() {
         let ollama = Ollama::default().with_model("llama3");
 

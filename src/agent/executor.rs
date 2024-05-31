@@ -59,7 +59,7 @@ where
     fn get_name_to_tools(&self) -> HashMap<String, Arc<dyn Tool>> {
         let mut name_to_tool = HashMap::new();
         for tool in self.agent.get_tools().iter() {
-            log::debug!("Loading Tool:{}", tool.name());
+            log::info!("Loading Tool:{}", tool.name());
             name_to_tool.insert(tool.name().trim().replace(" ", "_"), tool.clone());
         }
         name_to_tool
@@ -157,5 +157,65 @@ where
     async fn invoke(&self, input_variables: PromptArgs) -> Result<String, ChainError> {
         let result = self.call(input_variables).await?;
         Ok(result.generation)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        agent::ConversationalAgentBuilder, chain::options::ChainCallOptions,
+        language_models::llm::LLM, llm::client::Ollama, prompt_args, schemas::Message,
+        tools::CommandExecutor,
+    };
+
+    use super::*;
+    use tokio::io::AsyncWriteExt;
+    use tokio_stream::StreamExt;
+
+    #[tokio::test]
+    async fn test_agent() {
+        let llm = Ollama::default().with_model("llama3");
+        let memory = SimpleMemory::new();
+        let command_executor = CommandExecutor::default();
+        let agent = ConversationalAgentBuilder::new()
+            .tools(&[Arc::new(command_executor)])
+            .options(ChainCallOptions::new().with_max_tokens(1000))
+            .build(llm)
+            .unwrap();
+
+        let executor = AgentExecutor::from_agent(agent).with_memory(memory.into());
+
+        let input_variables = prompt_args! {
+            "input" => "What is the name of the current dir",
+        };
+
+        match executor.invoke(input_variables).await {
+            Ok(result) => {
+                println!("Result: {:?}", result);
+            }
+            Err(e) => panic!("Error invoking LLMChain: {:?}", e),
+        }
+    }
+    #[tokio::test]
+    #[ignore]
+    async fn test_generate() {
+        let ollama = Ollama::default().with_model("llama3");
+        let response = ollama.invoke("Hey Macarena, ay").await.unwrap();
+        println!("{}", response);
+    }
+
+    #[tokio::test]
+    async fn test_stream() {
+        let ollama = Ollama::default().with_model("llama3");
+
+        let message = Message::new_human_message("Why does water boil at 100 degrees?");
+        let mut stream = ollama.stream(&vec![message]).await.unwrap();
+        let mut stdout = tokio::io::stdout();
+        while let Some(res) = stream.next().await {
+            let data = res.unwrap();
+            stdout.write(data.content.as_bytes()).await.unwrap();
+        }
+        stdout.write(b"\n").await.unwrap();
+        stdout.flush().await.unwrap();
     }
 }
