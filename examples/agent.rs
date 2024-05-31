@@ -3,7 +3,10 @@ use std::sync::Arc;
 use langchain_rust::{
     agent::{AgentExecutor, ConversationalAgentBuilder},
     chain::{options::ChainCallOptions, Chain},
-    llm::openai::{OpenAI, OpenAIModel},
+    llm::{
+        client::Ollama,
+        openai::{OpenAI, OpenAIModel},
+    },
     memory::SimpleMemory,
     prompt_args,
     tools::CommandExecutor,
@@ -11,7 +14,8 @@ use langchain_rust::{
 
 #[tokio::main]
 async fn main() {
-    let llm = OpenAI::default().with_model(OpenAIModel::Gpt4Turbo);
+    // let llm = OpenAI::default().with_model(OpenAIModel::Gpt4Turbo);
+    let llm = Ollama::default().with_model("llama3");
     let memory = SimpleMemory::new();
     let command_executor = CommandExecutor::default();
     let agent = ConversationalAgentBuilder::new()
