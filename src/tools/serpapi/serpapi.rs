@@ -184,7 +184,6 @@ mod tests {
     use super::SerpApi;
 
     #[tokio::test]
-    #[ignore]
     async fn serpapi_tool() {
         let serpapi = SerpApi::default();
         let s = serpapi

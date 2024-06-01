@@ -114,7 +114,7 @@ pub trait Chain: Sync + Send {
         &self,
         input_variables: PromptArgs,
     ) -> Result<HashMap<String, Value>, ChainError> {
-        log::info!("Using defualt implementation");
+        log::info!("Using default implementation");
         let result = self.call(input_variables.clone()).await?;
         let mut output = HashMap::new();
         let output_key = self

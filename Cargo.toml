@@ -77,7 +77,8 @@ ollama-rs = { version = "0.1.9", optional = true, features = [
     "stream",
     "chat-history",
 ] }
-
+ractor = "0.10"
+simple_logger = "5.0.0"
 [features]
 default = ["ollama", "qdrant"]
 postgres = ["pgvector", "sqlx", "uuid"]
